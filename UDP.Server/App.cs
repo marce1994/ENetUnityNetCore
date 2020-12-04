@@ -44,6 +44,7 @@ namespace UDP.Server
             _server = new Host();
             Address address = new Address();
             address.Port = _port;
+            address.SetIP("0.0.0.0");
             _server.Create(address, _maxClients);
 
             // Other
