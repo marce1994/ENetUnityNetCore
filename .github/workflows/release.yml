@@ -73,7 +73,7 @@ jobs:
     
     # Build Server
     - name: Build server
-      run: dotnet publish --runtime win-x64 --self-contained true -o ./ServerBuild ./UDP.Server
+      run: dotnet publish --runtime win-x64 --self-contained false -o ./ServerBuild ./UDP.Server
     
     # Make zip file
     - name: Make zip file
