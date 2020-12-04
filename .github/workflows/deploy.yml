@@ -33,8 +33,6 @@ jobs:
           # Name of the heroku application to which the build is to be sent.
           heroku_app_name: enet-server-test
           # The email address associated with your Heroku account.
-          email: 
+          email: ${{ secrets.HEROKU_EMAIL }}
           # Heroku API key associated with provided user's email.
-          heroku_api_key: ${secrets.HEROKU_EMAIL}
-          # Dokerfile directory.
-          dockerfile_directory: ${secrets.HEROKU_APIKEY}
+          heroku_api_key: ${{ secrets.HEROKU_APIKEY }}
