@@ -73,11 +73,11 @@ jobs:
     
     # Build Server
     - name: Build server
-      run: dotnet publish -o ./ServerBuild ./UDP.Server
+      run: dotnet publish --runtime win-x64 --self-contained true -o ./ServerBuild ./UDP.Server
     
     # Make zip file
     - name: Make zip file
-      run: zip -r Server.zip ./ServerBuild
+      run: zip -r Server_Win64.zip ./ServerBuild
     
     # Release drafter
     - name: Create Release
@@ -93,7 +93,7 @@ jobs:
       uses: flcdrg/remove-release-asset-action@v1.0.4
       with:
         release_id: ${{ steps.create_release.outputs.id }}
-        asset_name: Server.zip
+        asset_name: Server_Win64.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
@@ -126,6 +126,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Server.zip
-        asset_name: Server.zip
+        asset_path: ./Server_Win64.zip
+        asset_name: Server_Win64.zip
         asset_content_type: application/zip
