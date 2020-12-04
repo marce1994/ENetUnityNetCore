@@ -52,7 +52,7 @@ namespace UDP.Server
 
         public async Task Run()
         {
-            while (!Console.KeyAvailable)
+            while (true)
             {
                 bool polled = false;
                 while (!polled)
