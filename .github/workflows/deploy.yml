@@ -25,10 +25,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         
-      - name: Build, Push and Release a Docker container to Heroku.
-        uses: gonuit/heroku-docker-deploy@v1.2.0
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          heroku_app_name: enet-server-test
-          email: ${{ secrets.HEROKU_EMAIL }}
-          heroku_api_key: ${{ secrets.HEROKU_APIKEY }}
-          dockerfile_path: .
+          name: marce1994/enet-server
+          username: ${{secrets.USERNAME}}
+          password: ${{secrets.PASSWORD}}
+          dockerfile: Dockerfile
+          cache: true
