@@ -4,12 +4,14 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
-COPY UDP.Server/*.csproj ./
-RUN dotnet restore
+COPY UDP.Server/*.csproj UDP.Server/
+COPY UDP.Core/*.csproj UDP.Core/
+RUN dotnet restore /UDP.Server
+RUN dotnet restore /UDP.Core
 
 # Copy everything else and build
-COPY UDP.Server/ .
-RUN dotnet publish -c Release -o out
+COPY . .
+RUN dotnet publish -c Release -o out /UDP.Server
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
