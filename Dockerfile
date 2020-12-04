@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy everything else and build
 COPY . .
-RUN dotnet publish -c Release -o out /UDP.Server
+RUN dotnet publish -o ./out ./UDP.Server
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
