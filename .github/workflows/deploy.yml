@@ -24,15 +24,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
+        
       - name: Build, Push and Release a Docker container to Heroku.
-        # You may pin to the exact commit or the version.
-        # uses: gonuit/heroku-docker-deploy@9ac1c7bed9a3ad0cb4e1e906b27edb0394115eb6
         uses: gonuit/heroku-docker-deploy@v1.2.0
         with:
-          # Name of the heroku application to which the build is to be sent.
           heroku_app_name: enet-server-test
-          # The email address associated with your Heroku account.
           email: ${{ secrets.HEROKU_EMAIL }}
-          # Heroku API key associated with provided user's email.
           heroku_api_key: ${{ secrets.HEROKU_APIKEY }}
+          dockerfile_path: .
