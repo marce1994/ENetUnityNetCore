@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UDP.Core.Model;
 using UDP.Core.Model.Packet;
@@ -51,9 +52,9 @@ namespace UDP.Server
             Console.WriteLine($"Circle ENet Server started on {_port}");
         }
 
-        public async Task Run()
+        public async Task Run(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 bool polled = false;
                 while (!polled)
@@ -207,6 +208,7 @@ namespace UDP.Server
             Protocol protocol = new Protocol();
             GameUpdate gameUpdate = default;
             gameUpdate.Board = game.Board;
+            gameUpdate.PlayerTurn = game.PlayerTurn;
             gameUpdate.Player1ID = game.Player1.ID;
             gameUpdate.Player1Score = game.Player1Score;
             gameUpdate.Player2ID = game.Player2.ID;

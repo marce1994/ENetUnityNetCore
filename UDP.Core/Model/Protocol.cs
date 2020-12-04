@@ -21,13 +21,14 @@ namespace UDP.Core.Model
 
         public byte[] Serialize(GameUpdate gameUpdate)
         {
-            const int bufSize = sizeof(byte) + sizeof(byte) * 9 + sizeof(uint) + sizeof(uint) + sizeof(uint) + sizeof(uint);
+            const int bufSize = sizeof(byte) + sizeof(byte) * 9 + sizeof(uint) + sizeof(uint) + sizeof(uint) + sizeof(uint) + sizeof(uint);
             InitWriter(bufSize);
             m_writer.Write((byte)gameUpdate.PacketId);
 
             for (int i = 0; i < 9; i++)
                 m_writer.Write((byte)gameUpdate.Board[i]);
 
+            m_writer.Write(gameUpdate.PlayerTurn);
             m_writer.Write(gameUpdate.Player1ID);
             m_writer.Write(gameUpdate.Player2ID);
             m_writer.Write(gameUpdate.Player1Score);
@@ -77,6 +78,7 @@ namespace UDP.Core.Model
             for (int i = 0; i < 9; i++)
                 gameUpdate.Board[i] = (EValue)m_reader.ReadByte();
 
+            gameUpdate.PlayerTurn = m_reader.ReadUInt32();
             gameUpdate.Player1ID = m_reader.ReadUInt32();
             gameUpdate.Player2ID = m_reader.ReadUInt32();
             gameUpdate.Player1Score = m_reader.ReadUInt32();

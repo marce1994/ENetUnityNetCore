@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using UDP.Server;
 
@@ -39,11 +40,12 @@ namespace ConsoleAppSettings
 
             Log.Information("Building service provider");
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
 
             try
             {
                 Log.Information("Starting service");
-                await serviceProvider.GetService<App>().Run();
+                await serviceProvider.GetService<App>().Run(tokenSource.Token);
                 Log.Information("Ending service");
             }
             catch (Exception ex)

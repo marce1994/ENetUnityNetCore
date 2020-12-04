@@ -1,12 +1,10 @@
 ﻿using ENet;
 using System;
 using System.Collections;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UDP.Core.Model;
 using UDP.Core.Model.Packet;
-using UDP.Core.Model.Packet.Contract;
 using UDP.Core.Model.Packet.Enum;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,24 +18,26 @@ public class GameManager : MonoBehaviour
     public Sprite[] raw_images;
     public Tuple<EValue, Sprite>[] images;
 
-    const int channelID = 0;
+    private const int channelID = 0;
 
     private Button[] element_buttons;
     private EValue[] board;
-    private string LocalPlayerName = "DefaultName";
+    private string _localPlayerName;
 
-    Text Player1Name;
-    Text Player2Name;
-    Text Player1Score;
-    Text Player2Score;
+    private Text Player1Name;
+    private Text Player2Name;
+    private Text Player1Score;
+    private Text Player2Score;
 
-    GameObject waiting_pannel;
-    Coroutine waiting_animation;
+    private GameObject waiting_pannel;
+    private Coroutine waiting_animation;
 
     uint playerId;
 
     private void Awake()
     {
+        _localPlayerName = $"Default{UnityEngine.Random.Range(0, 999)}";
+
         images = new Tuple<EValue, Sprite>[]
         {
             new Tuple<EValue, Sprite>(EValue.EMPTY, raw_images[0]),
@@ -85,8 +85,8 @@ public class GameManager : MonoBehaviour
         var NameInput = inputFields.Single(x => x.name == "PlayerNameInput");
         NameInput.onValueChanged.AddListener((value) =>
         {
-            LocalPlayerName = string.IsNullOrEmpty(value) ? $"Default{UnityEngine.Random.Range(0, 999)}" : value;
-            NameInput.GetComponentsInChildren<Text>().Single(x => x.name == "Placeholder").text = LocalPlayerName;
+            _localPlayerName = string.IsNullOrEmpty(value) ? $"Default{UnityEngine.Random.Range(0, 999)}" : value;
+            NameInput.GetComponentsInChildren<Text>().Single(x => x.name == "Placeholder").text = _localPlayerName;
         });
 
         var Header = menuItems.Single(x => x.name == "Header");
@@ -212,7 +212,7 @@ public class GameManager : MonoBehaviour
             Player2Name.text = string.Concat(login.PlayerName);
             Player2Score.text = "0";
 
-            Player1Name.text = LocalPlayerName;
+            Player1Name.text = _localPlayerName;
             Player1Score.text = "0";
 
             waiting_pannel.SetActive(false);
@@ -223,8 +223,14 @@ public class GameManager : MonoBehaviour
         else if (packetInfo.PacketId == EPacketId.BoardUpdateEvent)
         {
             protocol.Deserialize(readBuffer, out GameUpdate gameUpdate);
-            Player1Score.text = $"{gameUpdate.Player1Score}";
-            Player2Score.text = $"{gameUpdate.Player2Score}";
+            Player1Score.text = $"{(playerId == gameUpdate.Player1ID? gameUpdate.Player1Score : gameUpdate.Player2Score)}";
+            Player2Score.text = $"{(playerId == gameUpdate.Player1ID ? gameUpdate.Player2Score : gameUpdate.Player1Score)}";
+
+            bool myTurn = playerId == gameUpdate.PlayerTurn;
+
+            Player1Name.gameObject.GetComponent<Outline>().enabled = myTurn;
+            Player2Name.gameObject.GetComponent<Outline>().enabled = !myTurn;
+
             UpdateBoard(gameUpdate.Board);
         }
         else if (packetInfo.PacketId == EPacketId.LogoutEvent)
@@ -242,7 +248,7 @@ public class GameManager : MonoBehaviour
 
         login.PacketId = EPacketId.LoginRequest;
         login.PlayerId = 0;
-        login.PlayerName = LocalPlayerName.ToCharArray();
+        login.PlayerName = _localPlayerName.ToCharArray();
 
         var buffer = protocol.Serialize(login);
         var packet = default(Packet);

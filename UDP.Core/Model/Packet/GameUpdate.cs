@@ -8,7 +8,7 @@ namespace UDP.Core.Model.Packet
         public EPacketId PacketId { get; set; }
         public EValue[] Board { get; set; }
 
-
+        public uint PlayerTurn { get; set; }
         public uint Player1ID { get; set; }
         public uint Player2ID { get; set; }
         public uint Player1Score { get; set; }
